@@ -13,7 +13,7 @@ RUN apt-get update && apt-get install -y \
 
 RUN groupadd vpn
 
-ARG STRONGSWAN_VERSION
+ARG STRONGSWAN_VERSION=5.9.0
 RUN mkdir -p /usr/src/strongswan \
     && curl -SL "https://download.strongswan.org/strongswan-$STRONGSWAN_VERSION.tar.bz2" \
     | tar -jxC /usr/src/strongswan --strip-components 1 \
