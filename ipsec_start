@@ -1,0 +1,33 @@
+#!/bin/bash
+
+# Traps are to handle if we are waiting on pipework
+trap int INT
+int() {
+  echo "Caught INT, exiting"
+  exit 255
+}
+trap term TERM
+term(){
+  echo "Gracefully shutting down"
+  exit 0
+}
+
+pid=/var/run/starter.charon.pid
+if [ -f $pid ]; then
+  rm $pid
+fi
+
+: ${IPSEC_DEFAULT_PSK_LENGTH=32}
+
+if [ ! -f /etc/ipsec.secrets ]; then
+  ln -s /etc/ipsec.d/ipsec.secrets /etc/ipsec.secrets
+fi
+
+WAIT_INT=$1
+
+if [ ! -z $WAIT_INT ]; then
+  echo "Waiting for pipework"
+  pipework --wait $WAIT_INT
+fi
+
+exec /usr/libexec/ipsec/starter --nofork
